@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Form Example</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10"></div>
+      <div class="col-md-1"></div>
+  </div>
+ 
+  <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-7">
+        <h1>Demo Site for Topics DSL to Elasticsearch Query Generator</h1>
+        <p>Please enter your example similar to the one below, you can use any /topicname /subtopicname and -tagname to exclude any tag that you don't like to see in the filtered posts</p>
+      </div>
+      <div class="col-md-3"></div>
+  </div>
+</div>
+<form role="form" action="" method="POST">
+	<div class="form-group">
+		<label for="query">  Your Query : </label> <br>
+  <input type="text" name="query" class="form-control" id="query" value="/security /facebook">
+  </div>
+  <input type="submit" class="btn btn-primary" name="submit" value="Submit">
+
+</form>
+<p>If you click the "Submit" button, the form-data will be sent with a default example i.e. security topic for facebook api. or feel free to change it</p>
+
+</body>
+
+
+</html>

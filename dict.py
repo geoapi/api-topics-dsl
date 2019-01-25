@@ -1,38 +1,23 @@
 api_dict = [
-             {"name":"facebook","keywords":["facebook graph api", "facebook API", "facebook api", "FB API", "fb api"],"tag":"facebook-graph-api"},
-             {"name":"twitter", "keywords":["twitter api", "Twitter API"], "tag":"twitter-api"},
-             {"name":"winapi","keywords":["Winapi","win api", "WINAPI", "win32 api", "Windows API","The Windows API"],"tag":"winapi"},
-             {"name":"gmail", "keywords":["Google GMail api", "Gmail API"], "tag":"gmail-api"},
-             {"name":"java", "keywords":["Java api", "Java API"], "tag":"java-api"},
-             {"name": "youtube", "keywords": ["YouTube API"], "tag": "youtube-api"},
-             {"name": "googleplaces", "keywords": ["Google Places API"], "tag": "google-places-api"},
-             {"name": "instagram", "keywords": ["instagram api","Instagram API"], "tag": "instagram-api"},
-              {"name": "youtube", "keywords": ["youtube api"], "tag": "youtube-api"},
-             {"name": "", "keywords": [""], "tag": ""},
-             {"name": "googlecalendar", "keywords": ["google calendar api"], "tag": "google-calendar-api"},
-              {"name": "dropbox", "keywords": ["dropbox api"], "tag": "dropbox-api"},
-              {"name": "slack", "keywords": ["slack api"], "tag": "slack-api"},
-              {"name": "heresdk", "keywords": ["HERE sdk"], "tag": "here-api"},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
-             # {"name": "", "keywords": [""], "tag": ""},
+             {"name":"facebook","keywords":["facebook_graph_api", "facebook_API", "facebook_api", "FB_API", "fb_api","fb","fbapi","facebookapi","facebookgraphapi"],"tag":"facebook-graph-api"},
+             {"name":"twitter", "keywords":["twitter_api", "Twitter_API","twitterapi"], "tag":"twitter-api"},
+             {"name":"winapi","keywords":["Winapi","win_api", "WINAPI", "win32_api","win32api", "Windows_API","The_Windows_API"],"tag":"winapi"},
+             {"name":"gmail", "keywords":["Google_GMail_api", "Gmail_API","Google_api","Google_API"], "tag":"gmail-api"},
+             {"name":"java", "keywords":["Java_api", "Java_API"], "tag":"java-api"},
+             {"name": "youtube", "keywords": ["YouTube_API","youtube_api","Youtube_api","Youtube_API"], "tag": "youtube-api"},
+             {"name": "googleplaces", "keywords": ["Google_Places_API","Google_places_api","Google_Places_API"], "tag": "google-places-api"},
+             {"name": "instagram", "keywords": ["instagram_api","Instagram_API"], "tag": "instagram-api"},
+             {"name": "youtube", "keywords": ["youtube_api"], "tag": "youtube-api"},
+             {"name": "googlecalendar", "keywords": ["google_calendar_api","Google_Calendar_API"], "tag": "google-calendar-api"},
+             {"name": "dropbox", "keywords": ["dropbox_api","Dropbox_API"], "tag": "dropbox-api"},
+             {"name": "slack", "keywords": ["slack_api"], "tag": "slack-api"},
+             {"name": "heresdk", "keywords": ["HERE_sdk","here_sdk","here_api","Here_API","hereapi"], "tag": "here-api"}
             ]
 
 topic_dict = [
-    {"id":0,"name":"API security","category_id":0, "keywords":["security"]},
+    {"id":0,"name":"API security","category_id":0, "keywords":["security","safety","privacy"]},
     {"id":1,"name":"oauth configuration","category_id":0,"keywords":["oauth","authentication","configuration","settings"]},
-    {"id":2,"name":"oauth clarification","category_id":0,"keywords":["oauth"]}, #,"understand","clarify" take out as they are not necessarly related to oauth
+    {"id":2,"name":"oauth clarification","category_id":0,"keywords":["oauth","clarify"]}, #,"understand","clarify" take out as they are not necessarly related to oauth
     {"id":3,"name":"api constraints","category_id":1,"keywords":["restrictions"]},
     {"id":4,"name":"possibility of a functionality","category_id":1,"keywords":["possible","feasible","doable"]},
     {"id":5,"name":"understanding usage limitation","category_id":1,"keywords":["limited","restricted","impossible"]},
@@ -55,14 +40,14 @@ topic_dict = [
     {"id":22,"name":"design patterns","category_id":6,"keywords":["design","design-pattern","design-patterns"]},
     {"id":23,"name":"version management","category_id":6,"keywords":["version"]},
     {"id":24,"name":"setting parameters","category_id":6,"keywords":["setting","parameter"]},
-    {"id":25,"name":"recommendation","category_id":6,"keywords":["recommend"]}
+    {"id":25,"name":"recommendation","category_id":6,"keywords":["recommend","suggest"]}
     ]
 
 def check_bdsl_string(dsl_string):
     print(dsl_string)
     dsl_string = dsl_string.encode('utf-8')
     print(dsl_string)
-    dsl_string = dsl_string.split(' ')
+    dsl_string = dsl_string.decode().split(' ')
     #prepare a bare-list of api names and another for topic names so we can match
     topic_dict_temp = []
     api_dict_temp = []
@@ -80,7 +65,8 @@ def check_bdsl_string(dsl_string):
         for key in item['keywords']:
             if key:
                 topics_dict_temp.append(key)
-    not_included_dict = []
+    not_included_dict_topics = []
+    not_included_dict_apis = []
     for one_item in dsl_string:
         user_keyword = ''.join(filter(str.isalnum,one_item))
         operator = one_item[0]
@@ -88,12 +74,14 @@ def check_bdsl_string(dsl_string):
             topic_name.append(user_keyword)
         if (user_keyword in api_dict_temp and operator == '/'):
             api_name.append(user_keyword)
-        if (operator == '-'):
-            not_included_dict.append(user_keyword)
+        if (user_keyword in topics_dict_temp and operator == '-'):
+            not_included_dict_topics.append(user_keyword)
+        if (user_keyword in api_dict_temp and operator == '-'):
+            not_included_dict_apis.append(user_keyword)
 
-    return(topic_name,api_name,not_included_dict)
+    return(topic_name,api_name,not_included_dict_topics,not_included_dict_apis)
 # Dynamic Construction of ELK DSL
-def construct_dynamic_dsl(topic_name,api_name,not_included_dict):
+def construct_dynamic_dsl(topic_name,api_name,not_included_dict_topics,not_included_dict_apis):
     i = 0
     op = ''
     match_ = ''
@@ -108,17 +96,35 @@ def construct_dynamic_dsl(topic_name,api_name,not_included_dict):
         i += 1
     if (len(topic_name) >1 or len(api_name) > 1):
         match_ = '{"bool": {"must": ['+match_+']}}'
-# MUST NOT
+# MUST NOT for api topics
     i = 0
     op = ''
     match2_ = ''
-    while (len(not_included_dict) >= 1 and i < len(not_included_dict)):
-        match2_ = match2_ + op + ' {"match":{"tags":"' + not_included_dict[i] + '"}}'
+    while (len(not_included_dict_topics) >= 1 and i < len(not_included_dict_topics)):
+        match2_ = match2_ + op + ' {"match":{"topic":"' + not_included_dict_topics[i] + '"}}'
         op = ','
         i += 1
-    if not_included_dict:
-        match2_ = ',{"bool":{"must_not":['+match2_+']}}'
+
+# MUST NOT for APIs
+    i = 0
+    op = ''
+    match3_ = ''
+    while (len(not_included_dict_apis) >= 1 and i < len(not_included_dict_apis)):
+        match3_ = match3_ + op + ' {"match":{"api":"' + not_included_dict_apis[i] + '"}}'
+        op = ','
+        i += 1
+
+    if not_included_dict_topics and not_included_dict_apis:
+        match2_ = ',{"bool":{"must_not":['+match2_+match3_+']}}'
+    elif not_included_dict_topics:
+        match2_ = ',{"bool":{"must_not":[' + match2_ + ']}}'
+    else:
+        match2_ = ',{"bool":{"must_not":[' + match3_ + ']}}'
+
     dsl = '{"query":{"bool":{"must":['+match_+match2_+']}}}'
     return dsl
 
 
+#a = check_bdsl_string('/facebook /security -debugging -here_api')
+#b = construct_dynamic_dsl(a[0],a[1],a[2],a[3])
+#print(b)

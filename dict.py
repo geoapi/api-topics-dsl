@@ -47,7 +47,8 @@ def check_bdsl_string(dsl_string):
     print(dsl_string)
     dsl_string = dsl_string.encode('utf-8')
     print(dsl_string)
-    dsl_string = dsl_string.decode().split(' ')
+#    dsl_string = dsl_string.decode().split(' ')#locally
+    dsl_string = dsl_string.split(' ') #on deployment!!!
     #prepare a bare-list of api names and another for topic names so we can match
     topic_dict_temp = []
     api_dict_temp = []

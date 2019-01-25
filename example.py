@@ -13,5 +13,5 @@ def hello_world():
         }
         query = (data["query"])
         a = dict.check_bdsl_string(query)
-        b = dict.construct_dynamic_dsl(a[0],a[1],a[2])
+        b = dict.construct_dynamic_dsl(a[0],a[1],a[2],a[3])
         return render_template('results.html',data =b)

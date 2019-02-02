@@ -21,5 +21,19 @@
 	<h1> Results </h1>
 <h2>{{data }}</h2>
 <h2><span id="results"> </span> </h2>
+
+<form role="form" action="/dsl" method="POST">
+	<div class="form-group">
+		<label for="request_url">  Your Request URL : </label> <br>
+  <input type="text" name="query" class="form-control" id="query" value="http://35.244.98.50:9200/questions/so/_search">
+
+        <label for="request_body">  ElasticSearch DSL : </label> <br>
+  <input type="text" name="request_body" class="form-control" id="request_body" value={{data}}>
+  </div>
+  <input type="submit" class="btn btn-primary" name="submit" value="Submit">
+</form>
+
+<h2><span id="request_results"> </span> </h2>
+
 </body>
 </html>

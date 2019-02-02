@@ -13,5 +13,13 @@ def hello_world():
         }
         query = (data["query"])
         a = dict.check_bdsl_string(query)
-        b = dict.construct_dynamic_dsl(a[0],a[1],a[2])
+        b = dict.construct_dynamic_dsl(a[0],a[1],a[2],a[3])
         return render_template('results.html',data =b)
+
+
+@app.route('/dsl', methods = ['POST', 'GET'])
+def get_dsl():
+    if request.method == 'GET':
+        return render_template('basic_form.html')
+    elif request.method == 'POST':
+        return render_template('results.html',data)

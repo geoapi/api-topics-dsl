@@ -119,7 +119,7 @@ def construct_dynamic_dsl(topic_name,api_name,not_included_dict_topics,not_inclu
         match2_ = ',{"bool":{"must_not":['+match2_+match3_+']}}'
     elif not_included_dict_topics:
         match2_ = ',{"bool":{"must_not":[' + match2_ + ']}}'
-    else:
+    elif not_included_dict_apis:
         match2_ = ',{"bool":{"must_not":[' + match3_ + ']}}'
 
     dsl = '{"query":{"bool":{"must":['+match_+match2_+']}}}'

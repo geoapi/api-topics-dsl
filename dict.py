@@ -242,7 +242,7 @@ def construct_dynamic_dsl_boolean_query(obj):
 
 
     i = 0
-    op =''
+    op =','
     while (len(api_anded) >= 1 and i < len(api_anded)):
         match_ = match_ + op + ' {"match":{"api":"' + api_anded[i] + '"}}'
         op = ','
@@ -257,12 +257,12 @@ def construct_dynamic_dsl_boolean_query(obj):
     if (len(api_anded) >1 or len(topic_anded) > 1):
         match_ = '{"bool": {"must": ['+match_+']}}'
 
-# MUST NOT for api topics
+# MUST NOT for apis
     i = 0
     op = ''
     match2_ = ''
     while (len(api_not) >= 1 and i < len(api_not)):
-        match2_ = match2_ + op + ' {"match":{"api":"' + topic_not[i] + '"}}'
+        match2_ = match2_ + op + ' {"match":{"api":"' + api_not[i] + '"}}'
         op = ','
         i += 1
 
@@ -293,7 +293,7 @@ def construct_dynamic_dsl_boolean_query(obj):
         i += 1
 
     if topic_not and api_not:
-        match2_ = ',{"bool":{"must_not":['+match2_+match3_+']}}'
+        match2_ = ',{"bool":{"must_not":['+match2_+','+match3_+']}}'
     elif topic_not:
         match2_ = ',{"bool":{"must_not":[' + match2_ + ']}}'
     elif api_not:
@@ -305,14 +305,15 @@ def construct_dynamic_dsl_boolean_query(obj):
         match6_ = ',{"bool":{"should":[' + match5_ + ']}}'
     elif api_or:
         match6_ = ',{"bool":{"should":[' + match4_ + ']}}'
-
+    else:
+        match6_ =''
 
     dsl = '{"query":{"bool":{"must":['+match_+match2_+match6_+']}}}'
     return dsl
 
-cql = check_dsl_string_boolean("how to do it AND security AND facebook OR twitter NOT debugging NOT instagram")
-dsl = construct_dynamic_dsl_boolean_query(cql)
-print(dsl)
+#cql = check_dsl_string_boolean("short term AND facebook AND security NOT twitter")
+#dsl = construct_dynamic_dsl_boolean_query(cql)
+#print(dsl)
 
 #a = check_bdsl_string('/facebook /security -debugging -here_api')
 #b = construct_dynamic_dsl(a[0],a[1],a[2],a[3])

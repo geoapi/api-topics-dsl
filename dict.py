@@ -311,9 +311,9 @@ def construct_dynamic_dsl_boolean_query(obj):
     dsl = '{"query":{"bool":{"must":['+match_+match2_+match6_+']}}}'
     return dsl
 
-cql = check_dsl_string_boolean("short term AND facebook AND security NOT debugging")
-dsl = construct_dynamic_dsl_boolean_query(cql)
-print(dsl)
+#cql = check_dsl_string_boolean("short term AND facebook AND security NOT debugging")
+#dsl = construct_dynamic_dsl_boolean_query(cql)
+#print(dsl)
 
 #a = check_bdsl_string('/facebook /security -debugging -here_api')
 #b = construct_dynamic_dsl(a[0],a[1],a[2],a[3])

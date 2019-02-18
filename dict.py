@@ -132,7 +132,7 @@ def check_dsl_string_boolean(dsl_string):
   #  dsl_string = dsl_string.encode('utf-8')
   #  print(dsl_string)
 #    dsl_string = dsl_string.decode().split(' ')#locally
-    op = ["AND","OR"]
+    op = ["AND","OR","and","or","And","Or"]
     dsl_string = dsl_string.split(' ') #on deployment!!!
     #prepare a bare-list of api names and another for topic names so we can match
     query = ""
@@ -175,17 +175,17 @@ def check_dsl_string_boolean(dsl_string):
         query = ""
         getOp = l.popleft()
         getKey = l.popleft()
-        if getOp == "AND":
+        if getOp == "AND" or getOp == "And" or getOp == "and":
             if (getKey in api_dict_temp):
                 api_name_and.append(getKey)
             elif (getKey in topics_dict_temp):
                 topic_name_and.append(getKey)
-        elif getOp == "OR":
+        elif getOp == "OR" or getOp == "Or" or getOp == "or" :
             if (getKey in api_dict_temp):
                 api_name_or.append(getKey)
             elif (getKey in topics_dict_temp):
                 topic_name_or.append(getKey)
-        elif getOp == "NOT":
+        elif getOp == "NOT" or getOp == "Not" or getOp == "not":
             if (getKey in api_dict_temp):
                 api_name_not.append(getKey)
             elif (getKey in topics_dict_temp):

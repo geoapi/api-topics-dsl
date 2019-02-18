@@ -39,3 +39,20 @@ def hello_dsl():
         dsl = dict.construct_dynamic_dsl_boolean_query(cql)
         return render_template('dsl_results.html',data =dsl)
 
+@app.route('/apis',methods=['GET'])
+def get_apis():
+  if request.method =='GET':
+    from pymongo import MongoClient
+    client = MongoClient("mongodb://localhost:27017")
+    database = client["api"]
+    collection = database["api"]
+    query = {}
+    d = {}
+    cursor = collection.find(query)
+    try:
+        for doc in cursor:            
+            d["name"]=doc['name']
+        finally:
+            client.close()
+    return jsonify(d)
+

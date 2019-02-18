@@ -21,8 +21,8 @@
       <div class="col-md-2"></div>
       <div class="col-md-7">
         <h1>Demo Site for Topics DSL to Elasticsearch Query Generator</h1>
-        <p>Please enter your example similar to the one below, you can enter a query then use AND or OR operators then provide your topic name. You can exclude any topic or API using NOT topic name or NOT API name. For example :
-            <b> how to use tokens AND facebook NOT debugging </b> , in this simple DSL query you need to know about tokens usage with posts related to Facebook API but not things that is related to debugging Topic
+        <p>Please enter your example similar to the one below, you can enter a query then use AND or OR operators then provide your topic name /API name .  For example :
+            <b> how to use tokens AND facebook AND security </b> , in this simple DSL query you need to know about tokens usage with posts related to Facebook API and things that is related to security Topic
         </p>
       </div>
       <div class="col-md-3"></div>
@@ -31,7 +31,7 @@
 <form role="form" action="" method="POST">
 	<div class="form-group">
 		<label for="query">  Your Query : </label> <br>
-  <input type="text" name="query" class="form-control" id="query" value="how to use tokens AND facebook NOT debugging">
+  <input type="text" name="query" class="form-control" id="query" value="how to use tokens AND facebook AND security">
   </div>
   <input type="submit" class="btn btn-primary" name="submit" value="Submit">
 

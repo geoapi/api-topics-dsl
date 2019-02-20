@@ -31,7 +31,8 @@ def get_hooks():
             msg= "nothing found"
 
        payload =json.dumps({"text":msg})
-       r = requests.post(url = res_url, data = payload)
+       data = payload.json()
+       r = requests.post('http://35.244.98.50:9200/question/so/_search', json=data)
        print(r.text,res_url, payload)
     except KeyError as error:
         print(error)

@@ -48,8 +48,8 @@ def check_bdsl_string(dsl_string):
    # print(dsl_string)
     dsl_string = dsl_string.encode('utf-8')
   #  print(dsl_string)
-#    dsl_string = dsl_string.decode().split(' ')#locally
-    dsl_string = dsl_string.split(' ') #on deployment!!!
+    dsl_string = dsl_string.decode().split(' ')#locally
+#    dsl_string = dsl_string.split(' ') #on deployment!!!
     #prepare a bare-list of api names and another for topic names so we can match
     topic_dict_temp = []
     api_dict_temp = []
@@ -239,9 +239,6 @@ def construct_dynamic_dsl_boolean_query(obj):
 
     if (len(query) >= 1):
        match_ = ' {"match":{"body":"'+query+'"}}'
-
-
-
     i = 0
     op =','
     while (len(api_anded) >= 1 and i < len(api_anded)):
@@ -249,7 +246,10 @@ def construct_dynamic_dsl_boolean_query(obj):
         op = ','
         i += 1
     i = 0
-    op = ''
+    if len(topic_anded) >=1:
+        op = ','
+    else:
+        op = ''
     while (len(topic_anded) >= 1 and i < len(topic_anded)):
         match_ = match_ + op + ' {"match":{"topic":"' + topic_anded[i] + '"}}'
         op = ','
@@ -313,61 +313,9 @@ def construct_dynamic_dsl_boolean_query(obj):
     return dsl
 
 
-def construct_query(match_,type,key):
-    i = 0
-    op =','
-    while (len(key) >= 1 and i < len(key)):
-        match_ = match_ + op + ' {"match":{'+type+':"' + key[i] + '"}}'
-        op = ','
-        i += 1
-    return match_
-
-
-
-def construct_dynamic_dsl_boolean_query_abs(obj):
-    match_ = ''
-    if (len(obj[0]) >= 1):
-      match_ = ' {"match":{"body":"'+obj[0]+'"}}'
-
-    if (len(obj[1]) >= 1):
-      match_ = construct_query(match_,'topic',obj[1])
-
-    if (len(obj[2]) >1 or len(obj[2]) > 1):
-        match_ = '{"bool": {"must": ['+construct_query(match_,'topic',obj[2])+']}}'
-
-# MUST NOT for apis
-    match2_ = construct_query('','api', obj[5])
-
-# MUST NOT for APIs
-    match3_ = construct_query('','topic', obj[6])
-
-# API OR
-    match4_ = construct_query('','api', obj[3])
-
-# TOPIC OR
-    match5_ = construct_query('','topic', obj[4])
-
-    if obj[6] and obj[5]:
-        match2_ = ',{"bool":{"must_not":['+match2_+','+match3_+']}}'
-    elif obj[6]:
-        match2_ = ',{"bool":{"must_not":[' + match3_ + ']}}'
-    elif obj[5]:
-        match2_ = ',{"bool":{"must_not":[' + match2_ + ']}}'
-
-    if obj[3] and obj[4]:
-        match6_ = ',{"bool":{"should":['+match4_+match5_+']}}'
-    elif obj[4]:
-        match6_ = ',{"bool":{"should":[' + match5_ + ']}}'
-    elif obj[3]:
-        match6_ = ',{"bool":{"should":[' + match4_ + ']}}'
-    else:
-        match6_ =''
-    dsl = '{"query":{"bool":{"must":['+match_+match2_+match6_+']}}}'
-    return dsl
-
-cql = check_dsl_string_boolean("short term AND facebook AND security AND oauth NOT debugging")
-dsl = construct_dynamic_dsl_boolean_query_abs(cql)
-print(dsl)
+#cql = check_dsl_string_boolean("short term AND facebook AND security AND oauth NOT debugging")
+#dsl = construct_dynamic_dsl_boolean_query(cql)
+#print(dsl)
 
 #a = check_bdsl_string('/facebook /security -debugging -here_api')
 #b = construct_dynamic_dsl(a[0],a[1],a[2],a[3])

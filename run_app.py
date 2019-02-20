@@ -1,9 +1,79 @@
 from flask import Flask, request, render_template, jsonify
+import html
 import json, os
 import dict
+import requests
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
+
 app = Flask(__name__)
+
+@app.route('/test', methods = ['POST', 'GET'])
+def tosa22l():
+    if request.method == 'GET':
+        return 'hello geo'
+    elif request.method == 'POST':
+        return 'render_templatdata =b)'
+
+#This end point takes json object {"text":"access tokens and facebook and security and returns results from our TDSL and the indexing service"}
+@app.route('/tdsl',methods=['GET','POST'])
+def getlts():
+    if (request.method == 'POST'):
+       content = request.get_json(silent=True)
+       print(content['text'])
+       txt = content["text"]
+
+       a = dict.check_dsl_string_boolean(txt)
+       # print(a)
+       b = dict.construct_dynamic_dsl_boolean_query(a)
+
+       a = json.loads(b)
+
+       # now we have json body for a request to make for the search
+       r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
+       # print(r.status_code,r.json())
+       data = r.json()
+       noposts = (data['hits']['total'])  # total hits found!
+       head_section = '{"text": "I found ' + str(noposts) + ' number of posts, here are few examples:","attachments":['
+       posts = ''
+       op = ''
+       for i in range(0, 3):
+           title = (data['hits']['hits'][i]['_source']['title'])  # Title
+           body_sliced = data['hits']['hits'][i]['_source']['body']  # Body
+           body = (html.escape(body_sliced[:200]))  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
+
+           # body_sliced = data[:200]
+           link = "https://www.stackoverflow.com/questions/" + str(data['hits']['hits'][i]['_source']['question_id'])
+           # print(link)
+
+           api = data['hits']['hits'][i]['_source']['api']
+           api = " ".join(str(x) for x in api)
+           # print(api)
+           topic = data['hits']['hits'][i]['_source']['topic'][:10]
+           topic = " ".join(str(x) for x in topic)
+           # post = '{"type": "section","text":"*' + title + body + '<' + link + '> ' + '` TOPIC `' + topic + '` API `' + api + '"}'
+           post = '{"type": "section","text":"*' + title + '*"\\n""' + "body" + "\\n" + '<' + link + '>"\\n"' + '` TOPIC `' + topic + ' ` API `' + api + '"}'
+           posts = posts + op + post
+           if i != 3:
+               op = ','
+           else:
+               op = ''
+       attach_me = head_section + posts + ']}'
+       # + ',' + actions_buttons
+       print(attach_me)
+       #
+ #      asp = json.dumps(attach_me)
+       #asp = asp.cgi.escape()
+#       asp = json.loads(attach_me, strict=False)
+       r = requests.post('https://hooks.slack.com/services/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',attach_me)
+       print(r.status_code,r.json())
+    return 'ok',200
+
+
 @app.route('/tosal', methods = ['POST', 'GET'])
-def hello_world():
+def tosal():
     if request.method == 'GET':
         return render_template('basic_form.html')
     elif request.method == 'POST':
@@ -109,7 +179,7 @@ def search_posts():
 @app.route('/notifyme',methods=['GET','POST'])
 def notifyme():
      # msg = 'ready'
-     # if (request.method == 'POST'):
+   if (request.method == 'POST'):
      from urlparse import parse_qs
      from bson.json_util import dumps
      from bson import json_util
@@ -152,7 +222,10 @@ def notifyme():
      except KeyError as error:
         msg = error       
     # return jsonify({"text":json_util.dumps(obj)}),200
-     return jsonify({"text":msg}),200
+   return jsonify({"text":msg}),200
+
+
+
 
 if __name__  == '__main__':
     app.debug = True

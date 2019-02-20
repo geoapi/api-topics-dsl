@@ -1,0 +1,7 @@
+#!/home/george/api-topics-dsl/flask/bin/python
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from htmlparser import standalone
+
+standalone.main()

@@ -42,7 +42,7 @@ def getlts():
        for i in range(0, 3):
            title = (data['hits']['hits'][i]['_source']['title'])  # Title
            body_sliced = data['hits']['hits'][i]['_source']['body']  # Body
-           body = (html.escape(body_sliced[:200]))  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
+           body = body_sliced[:200]  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
 
            # body_sliced = data[:200]
            link = "https://www.stackoverflow.com/questions/" + str(data['hits']['hits'][i]['_source']['question_id'])
@@ -54,8 +54,9 @@ def getlts():
            topic = data['hits']['hits'][i]['_source']['topic'][:10]
            topic = " ".join(str(x) for x in topic)
            # post = '{"type": "section","text":"*' + title + body + '<' + link + '> ' + '` TOPIC `' + topic + '` API `' + api + '"}'
-           post = '{"type": "section","text":"*' + title + '*"\\n""' + "body" + "\\n" + '<' + link + '>"\\n"' + '` TOPIC `' + topic + ' ` API `' + api + '"}'
-           posts = posts + op + post
+           #post = '{"text":"*' + title + '*\n' + "body" + '\n' + '<' + link + '>\n' + '` TOPIC `' + topic + ' ` API `' + api + '"}'
+           post = {"text":'"' + title  + body + link + '` TOPIC `' + topic + '` API `' + api+'"'}
+           posts = posts + op + json.dumps(post)
            if i != 3:
                op = ','
            else:
@@ -64,12 +65,11 @@ def getlts():
        # + ',' + actions_buttons
        print(attach_me)
        #
- #      asp = json.dumps(attach_me)
+       #asp = json.dumps(attach_me)
        #asp = asp.cgi.escape()
-#       asp = json.loads(attach_me, strict=False)
        r = requests.post('https://hooks.slack.com/services/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',attach_me)
-       print(r.status_code,r.json())
-    return 'ok',200
+       print(r.status_code)
+    return  'ok',200
 
 
 @app.route('/tosal', methods = ['POST', 'GET'])

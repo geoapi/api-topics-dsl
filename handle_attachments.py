@@ -42,8 +42,7 @@ for i in range(0, 3):
 attach_me = head_section + posts + ']}'
 # + ',' + actions_buttons
 #print(attach_me)
-r = requests.post('https://hooks.slack.com/services/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',
-                  json=json.loads(attach_me, strict=False))
+r = requests.post('https://hooks.slack.com/services/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',json=attach_me)
 print(r.status_code)
 
 # import json, requests

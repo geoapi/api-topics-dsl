@@ -36,10 +36,17 @@ def getlts():
        # print(r.status_code,r.json())
        data = r.json()
        noposts = (data['hits']['total'])  # total hits found!
-       head_section = '{"text": "I found ' + str(noposts) + ' number of posts, here are few examples:","attachments":['
+       head_section = '{"text": "I found ' + str(noposts) + ' number of posts, see examples below :","attachments":['
        posts = ''
        op = ''
-       for i in range(0, 3):
+       if noposts >= 3:
+           k=3
+       else:
+           k = noposts
+       if noposts == 0:
+           r = requests.post('https://hooks.slack.com/services/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', {"text":"Sorry, I have no info. about this query"})
+           print(r.status_code)
+       for i in range(0, k):
            title = (data['hits']['hits'][i]['_source']['title'])  # Title
            body_sliced = data['hits']['hits'][i]['_source']['body']  # Body
            body = body_sliced[:200]  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
@@ -55,7 +62,7 @@ def getlts():
            topic = " ".join(str(x) for x in topic)
            # post = '{"type": "section","text":"*' + title + body + '<' + link + '> ' + '` TOPIC `' + topic + '` API `' + api + '"}'
            #post = '{"text":"*' + title + '*\n' + "body" + '\n' + '<' + link + '>\n' + '` TOPIC `' + topic + ' ` API `' + api + '"}'
-           post = {"text":'"' + title  + body + link + '` TOPIC `' + topic + '` API `' + api+'"'}
+           post = {"text":'"*' + title  +"*"+'"\n'+ body + link + '\n ` TOPIC ` \n' + topic + '\n `API` ' + api+'"'}
            posts = posts + op + json.dumps(post)
            if i != 3:
                op = ','

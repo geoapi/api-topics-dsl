@@ -1,6 +1,7 @@
 import requests, json
 from pymongo import MongoClient
 def get_hooks():
+    p = {"channel": "C1H9RESGL", "blocks": [{"type": "section","text": {"type": "mrkdwn","text": "Danny Torrence left the following review for your property:"}},{"type": "section","block_id": "section567","text": {"type": "mrkdwn","text": "<https://google.com|Overlook Hotel> \n :star: \n Doors had too many axe holes, guest in room 237 was far too rowdy, whole place felt stuck in the 1920s."}}]}
     client = MongoClient("mongodb://localhost:27017")
     database = client["api"]
     collection = database["notifications"]
@@ -30,7 +31,7 @@ def get_hooks():
        else:
             msg= "nothing found"
 
-       payload =json.dumps({"text":msg})
+       payload =json.dumps(p)
        r = requests.post(url = res_url, data = payload)
        print(r.text,res_url, payload)
     except KeyError as error:

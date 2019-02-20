@@ -132,13 +132,8 @@ def check_dsl_string_boolean(dsl_string):
   #  dsl_string = dsl_string.encode('utf-8')
   #  print(dsl_string)
 #    dsl_string = dsl_string.decode().split(' ')#locally
-<<<<<<< HEAD
     op = ["AND","OR","and","or","And","Or"]
-=======
-    op = ["AND","OR"]
-
     dsl_string = dsl_string.lower()
->>>>>>> c4105f3001d2e182d95a21e69568b146daa69d84
     dsl_string = dsl_string.split(' ') #on deployment!!!
     #prepare a bare-list of api names and another for topic names so we can match
     query = ""

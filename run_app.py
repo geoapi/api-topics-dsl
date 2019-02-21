@@ -30,53 +30,42 @@ def getlts():
        b = dict.construct_dynamic_dsl_boolean_query(a)
 
        a = json.loads(b)
-
        # now we have json body for a request to make for the search
        r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
        # print(r.status_code,r.json())
        data = r.json()
        noposts = (data['hits']['total'])  # total hits found!
-       head_section = '{"text": "I found ' + str(noposts) + ' number of posts, see examples below :","attachments":['
-       posts = ''
-       op = ''
-       if noposts >= 3:
-           k=3
-       else:
-           k = noposts
-       if noposts == 0:
-           r = requests.post('https://hooks.slack.com/services/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', {"text":"Sorry, I have no info. about this query"})
-           print(r.status_code)
-       for i in range(0, k):
+       title = "I found " + str(noposts) + " number of posts, here are few examples:"
+       d = {}
+       d['text'] = title
+       attach = []
+       for i in range(0, 3):
            title = (data['hits']['hits'][i]['_source']['title'])  # Title
            body_sliced = data['hits']['hits'][i]['_source']['body']  # Body
-           body = body_sliced[:200]  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
+           # body = (html.escape(body_sliced[:200])) # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
+           body = (body_sliced[
+                   :200])  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
 
+           p = {}
            # body_sliced = data[:200]
            link = "https://www.stackoverflow.com/questions/" + str(data['hits']['hits'][i]['_source']['question_id'])
            # print(link)
-
            api = data['hits']['hits'][i]['_source']['api']
            api = " ".join(str(x) for x in api)
            # print(api)
            topic = data['hits']['hits'][i]['_source']['topic'][:10]
            topic = " ".join(str(x) for x in topic)
            # post = '{"type": "section","text":"*' + title + body + '<' + link + '> ' + '` TOPIC `' + topic + '` API `' + api + '"}'
-           #post = '{"text":"*' + title + '*\n' + "body" + '\n' + '<' + link + '>\n' + '` TOPIC `' + topic + ' ` API `' + api + '"}'
-           post = {"text":'"*' + title  +"*"+'"\n'+ body + link + '\n ` TOPIC ` \n' + topic + '\n `API` ' + api+'"'}
-           posts = posts + op + json.dumps(post)
-           if i != 3:
-               op = ','
-           else:
-               op = ''
-       attach_me = head_section + posts + ']}'
-       # + ',' + actions_buttons
-       print(attach_me)
-       #
-       #asp = json.dumps(attach_me)
-       #asp = asp.cgi.escape()
-       r = requests.post('https://hooks.slack.com/services/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',attach_me)
-       print(r.status_code)
-    return  'ok',200
+           p[
+               'text'] = "*" + title + "*\n" + body + "\n" + link + "\n" + " `API` \n " + api + "\n" + " `TOPIC`" + " \n " + topic
+           attach.append(p)
+       d['attachments'] = attach
+       # print(attach_me)
+       j = json.dumps(d)
+       #Instead of making a request here return json to the bot
+       #r = requests.post('https://hooks.slack.com/services/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', j)
+       #print(r.status_code)
+    return  j,200
 
 
 @app.route('/tosal', methods = ['POST', 'GET'])
@@ -124,11 +113,6 @@ def get_apis():
  #   client.close()
     return jsonify({'name':d})
 
-if __name__  == '__main__':
-    app.debug = True
-    host = os.environ.get('IP','0.0.0.0')
-    port = int(os.environ.get('PORT',7000))
-    app.run(host=host,port=port)
 
 @app.route('/topics',methods=['GET'])
 def get_topics():
@@ -187,16 +171,18 @@ def search_posts():
 def notifyme():
      # msg = 'ready'
    if (request.method == 'POST'):
-     from urlparse import parse_qs
+     from urllib.parse import parse_qs
      from bson.json_util import dumps
      from bson import json_util
+     import datetime
      s = request.get_data()
-     s = parse_qs(s)
-     user= s["user_id"][0]
-     txt = s["text"][0]
+     res = parse_qs(s)
+     user= res["user_id"][0]
+     txt = res["text"][0]
      #print(s['text'][0])
      try:
       obj = {
+        "date":datetime.datetime.now(),
         "token": s["token"][0],
         "team_id": s["team_id"][0],
         "team_domain":s["team_domain"][0],
@@ -211,7 +197,7 @@ def notifyme():
             }
      except KeyError as error:
             msg = error
-     #print(obj)       
+     #print(obj)
      try:
         from pymongo import MongoClient
         client = MongoClient("mongodb://localhost:27017")
@@ -222,16 +208,26 @@ def notifyme():
         if (txt =="delete" or txt =="del"):
             collection.remove(myquery)
             msg= "I've removed your notification from my records use /notifyme if you changed your mind."
-        else:    
+        if (txt == "shownotifications" or txt == "shownotif"):
+            d = ""
+            cursor = collection.find(myquery)
+            try:
+                i = 0
+                for doc in cursor:
+                    d = d + " ("+ str(i)+ +") " (doc['text']) + "\n"
+
+            except:
+                print("check DB connection.")
+                r = requests.post('https://hooks.slack.com/services/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',d)
+                msg = "ok"
+        else:
             collection.update(myquery,obj,upsert=True)
             msg = "Your request is being considered, we'll let you know with updates"
      #     msg = s
      except KeyError as error:
-        msg = error       
+        msg = error
     # return jsonify({"text":json_util.dumps(obj)}),200
    return jsonify({"text":msg}),200
-
-
 
 
 if __name__  == '__main__':

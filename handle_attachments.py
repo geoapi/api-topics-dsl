@@ -15,34 +15,32 @@ r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
 # print(r.status_code,r.json())
 data = r.json()
 noposts = (data['hits']['total'])  # total hits found!
-head_section = '{"text": "I found ' + str(noposts) + ' number of posts, here are few examples:","attachments":['
-posts = ''
-op = ''
+title = "I found " + str(noposts) + " number of posts, here are few examples:"
+d = {}
+d['text'] = title
+attach = []
 for i in range(0, 3):
     title = (data['hits']['hits'][i]['_source']['title'])  # Title
     body_sliced = data['hits']['hits'][i]['_source']['body']  # Body
-    body = (html.escape(body_sliced[:200])) # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
+    #body = (html.escape(body_sliced[:200])) # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
+    body = (body_sliced[:200])  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
 
+    p = {}
     # body_sliced = data[:200]
     link = "https://www.stackoverflow.com/questions/" + str(data['hits']['hits'][i]['_source']['question_id'])
     # print(link)
-
     api = data['hits']['hits'][i]['_source']['api']
     api = " ".join(str(x) for x in api)
     # print(api)
     topic = data['hits']['hits'][i]['_source']['topic'][:10]
     topic = " ".join(str(x) for x in topic)
     #post = '{"type": "section","text":"*' + title + body + '<' + link + '> ' + '` TOPIC `' + topic + '` API `' + api + '"}'
-    post = '{"type": "section","text":"*' + title + '*\\n' + body + '\\n' + '<' + link + '>\\n' + '` TOPIC `' + topic + ' ` API `' + api + '"}'
-    posts = posts + op + post
-    if i != 3:
-        op = ','
-    else:
-        op = ''
-attach_me = head_section + posts + ']}'
-# + ',' + actions_buttons
+    p['text'] = "*"+ title + "*\n" + body + "\n" + link +"\n" + " `API` \n "+api +"\n" + " `TOPIC`"+" \n "+topic
+    attach.append(p)
+d['attachments']= attach
 #print(attach_me)
-r = requests.post('https://hooks.slack.com/services/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',json=attach_me)
+j=json.dumps(d)
+r = requests.post('https://hooks.slack.com/services/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',j)
 print(r.status_code)
 
 # import json, requests

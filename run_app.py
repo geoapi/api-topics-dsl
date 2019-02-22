@@ -65,7 +65,8 @@ def getlts():
        #Instead of making a request here return json to the bot
        #r = requests.post('https://hooks.slack.com/services/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', j)
        #print(r.status_code)
-    return  j,200
+#    return jsonify(j),200
+    return j,200
 
 
 @app.route('/tosal', methods = ['POST', 'GET'])
@@ -175,10 +176,14 @@ def notifyme():
      from bson.json_util import dumps
      from bson import json_util
      import datetime
+     from ast import literal_eval
      s = request.get_data()
-     res = parse_qs(s)
-     user= res["user_id"][0]
-     txt = res["text"][0]
+     s = s.decode()
+     s:Dict[str,List[str]] = parse_qs(s)
+#     res = literal_eval(q.decode('utf8'))
+#     print(res)
+     user= s["user_id"][0]
+     txt = s["text"][0]
      #print(s['text'][0])
      try:
       obj = {
@@ -204,32 +209,104 @@ def notifyme():
         database = client["api"]
         collection = database["notifications"]
         myquery = {"user_id":user}
-        #collection.insert_one(obj)
-        if (txt =="delete" or txt =="del"):
-            collection.remove(myquery)
-            msg= "I've removed your notification from my records use /notifyme if you changed your mind."
-        if (txt == "shownotifications" or txt == "shownotif"):
-            d = ""
-            cursor = collection.find(myquery)
-            try:
-                i = 0
-                for doc in cursor:
-                    d = d + " ("+ str(i)+ +") " (doc['text']) + "\n"
-
-            except:
-                print("check DB connection.")
-                r = requests.post('https://hooks.slack.com/services/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',d)
-                msg = "ok"
-        else:
-            collection.update(myquery,obj,upsert=True)
-            msg = "Your request is being considered, we'll let you know with updates"
+        cursor = collection.find(myquery)
+        a = "notfound"
+        for doc in cursor:
+            if (doc['text']==txt):
+                msg = "I've already recorded this notification"
+                a = "found"
+        if a== "notfound":        
+           collection.insert_one(obj)
+           msg = "Ok, I have recorded your request and will let you know shortly"
+    #    if (txt =="delete" or txt =="del"):
+    #        collection.remove(myquery)
+    #        msg= "I've removed your notification from my records use /notifyme if you changed your mind."
+    #    if (txt == "shownotifications" or txt == "shownotif"):
+     #       print("check DB connection.")
+      #          r = requests.post('https://hooks.slack.com/services/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',d)
+       #         msg = "ok"
+       # else:
+       #     collection.update(myquery,obj,upsert=True)
+       #     msg = "Your request is being considered, we'll let you know with updates"
      #     msg = s
      except KeyError as error:
         msg = error
     # return jsonify({"text":json_util.dumps(obj)}),200
    return jsonify({"text":msg}),200
 
+@app.route('/shownotifications',methods=['POST'])
+def shownotify():
+    import json
+    from urllib.parse import parse_qs
+    from typing import List, Dict
+    if (request.method == 'POST'):
+        s = request.get_data()
+        s = s.decode()
+        res:Dict[str,List[str]] = parse_qs(s) 
+        print(res)
+        user= res["user_id"][0]
+    #    txt = res["text"][0]
+        res_url =res['response_url']
+        print(res_url)
+        from pymongo import MongoClient
+        client = MongoClient("mongodb://localhost:27017")
+        database = client["api"]
+        collection = database["notifications"]
+        myquery = {"user_id":user}
+        cursor = collection.find(myquery)
+        #d = []
+        #r = dict()
+        t = ""
+        for doc in cursor:
+            t= t +"ID: "+(str(doc['_id'])[-4:]+ "  Content:  " + doc["text"])+"\n"
+       #TODO text for slack
+       
+        #if d:
+        #    for message in d:
+        #        msg = msg + d["text"] + '\n'
+        #else:
+        #    msg = 'you have not created any notification'
+    else:
+        return 'bad request',400
+    if not t:
+        t = "nothing to show!, you can use /notifyme to add new one first"
+    return t,200
+    #msg
 
+@app.route('/deletenotification',methods=['POST'])
+def delnotify():
+    from urllib.parse import parse_qs
+    from bson.objectid import ObjectId
+    if (request.method == 'POST'):
+        s = request.get_data()
+        s = s.decode()
+        res:Dict[str,List[str]] = parse_qs(s) 
+        print(res)
+        user= res["user_id"][0]
+        txt = res["text"][0]
+        res_url =res["response_url"][0]
+        from pymongo import MongoClient
+        client = MongoClient("mongodb://localhost:27017")
+        database = client["api"]
+        collection = database["notifications"]
+        myquery = {"user_id":user}
+        cursor = collection.find(myquery)
+        got_id =''
+        for doc in cursor:
+            d_id = doc['_id']
+            d_id = str(d_id)
+            d_id = d_id[-4:]
+            if txt == d_id:
+               got_id = doc['_id']
+        if got_id:       
+            res = collection.delete_one({'_id':got_id})
+            result = "Ok, it has been deleted."
+        else:
+            result = "Can't find it"
+        #TODO inspect result and if it's done well return ok if nothing deleted return not found
+    return result  
+
+        #TODO text for slack
 if __name__  == '__main__':
     app.debug = True
     host = os.environ.get('IP','0.0.0.0')

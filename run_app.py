@@ -18,8 +18,134 @@ def tosa22l():
         return 'render_templatdata =b)'
 
 #This end point takes json object {"text":"access tokens and facebook and security and returns results from our TDSL and the indexing service"}
+
+
 @app.route('/tdsl',methods=['GET','POST'])
 def getlts():
+    import asyncio
+    if (request.method == 'POST'):
+       content = request.get_json(silent=True)
+       txt = content["text"]
+
+       a = dict.check_dsl_string_boolean(txt)
+       b = dict.construct_dynamic_dsl_boolean_query(a)
+       a = json.loads(b)
+       url = 'http://35.244.98.50:9200/question/so/_search'
+       
+       def make_request(a): 
+          r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
+          return r
+       r = make_request(a)
+       print(r.json())
+       data = r.json()
+ #      data = r.text()
+    #   noposts = (data['hits']['total'])  # total hits found!
+    #   header = 'I found ' + str(noposts) + ' posts, here are few examples: \n'
+      # d = {}
+    #   post = ''
+    #   for i in range(0,3):
+    #     title = (data['hits']['hits'][0]['_source']['title'])  # Title
+    #     body_sliced = data['hits']['hits'][0]['_source']['body']  # Body
+    #     body = (body_sliced[:189])  
+       #  link = "https://www.stackoverflow.com/questions/" + str(data['hits']['hits'][0]['_source']['question_id'])
+    #     api = data['hits']['hits'][0]['_source']['api']
+    #     api = ' '.join(str(x) for x in api)
+    #     topic = data['hits']['hits'][0]['_source']['topic'][:10]
+    #     topic = " ".join(str(x) for x in topic)
+    #     post = post + title +'\n'+ body +'\n'+ '*TOPIC*' + topic +'\n'+ '`API`' + api +'\n'
+       return jsonify(data),200
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/tdsl2',methods=['GET','POST'])
+def getlts2():
+    if (request.method == 'POST'):
+       content = request.get_json(silent=True)
+       print(content['text'])
+       txt = content["text"]
+
+       a = dict.check_dsl_string_boolean(txt)
+       # print(a)
+       b = dict.construct_dynamic_dsl_boolean_query(a)
+
+       a = json.loads(b)
+       # now we have json body for a request to make for the search
+       r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
+       # print(r.status_code,r.json())
+       data = r.json()
+       noposts = (data['hits']['total'])  # total hits found!
+       header = "I found " + str(noposts) + " number of posts, here are few examples: \n"
+       d = {}
+      # d['text'] = title
+      # attach = []
+       post = ""
+       for i in range(0, 3):
+           title = (data['hits']['hits'][i]['_source']['title'])  # Title
+           body_sliced = data['hits']['hits'][i]['_source']['body']  # Body
+           # body = (html.escape(body_sliced[:200])) # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
+           body = (body_sliced[:189])  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
+
+        #   p = {}
+           # body_sliced = data[:200]
+           link = "https://www.stackoverflow.com/questions/" + str(data['hits']['hits'][i]['_source']['question_id'])
+           # print(link)
+           api = data['hits']['hits'][i]['_source']['api']
+           api = " ".join(str(x) for x in api)
+         #  # print(api)
+           topic = data['hits']['hits'][i]['_source']['topic'][:10]
+           topic = " ".join(str(x) for x in topic)
+           post = post + title +"\n"+ body +"\n"+ '<' + link + '> '+"\n" + '` TOPIC `' + topic +"\n"+ '` API `' + api +"\n"
+           #     attach.append(p)
+      # d['attachments'] = attach
+       # print(attach_me)
+      # j = json.dumps(d)
+       #Instead of making a request here return json to the bot
+       #r = requests.post('https://hooks.slack.com/services/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', j)
+       #print(r.status_code)
+#    return jsonify(j),200
+    return jsonify({"text":header+post}),200
+
+
+@app.route('/tdsl-backup',methods=['GET','POST'])
+def getltsbackup():
     if (request.method == 'POST'):
        content = request.get_json(silent=True)
        print(content['text'])

@@ -153,7 +153,7 @@ def check_dsl_string_boolean(dsl_string):
     collect_query_op.append(topic_name_or)
     collect_query_op.append(api_name_not)
     collect_query_op.append(topic_name_not)
-    print(collect_query_op)
+    #print(collect_query_op)
        # while (len(l) > 0 and l[0] not in op):
         #    query = query + " " + l.popleft()
     #collect_query_op.append(query)

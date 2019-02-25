@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/geo/anaconda3/bin/python
 import logging
 import sys
 logging.basicConfig(stream=sys.stderr)

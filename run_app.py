@@ -10,16 +10,7 @@ except ImportError:
 
 app = Flask(__name__)
 
-@app.route('/test', methods = ['POST', 'GET'])
-def tosa22l():
-    if request.method == 'GET':
-        return 'hello geo'
-    elif request.method == 'POST':
-        return 'render_templatdata =b)'
-
 #This end point takes json object {"text":"access tokens and facebook and security and returns results from our TDSL and the indexing service"}
-
-
 @app.route('/tdsl',methods=['GET','POST'])
 def getlts():
     import asyncio
@@ -54,146 +45,6 @@ def getlts():
     #     topic = " ".join(str(x) for x in topic)
     #     post = post + title +'\n'+ body +'\n'+ '*TOPIC*' + topic +'\n'+ '`API`' + api +'\n'
        return jsonify(data),200
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@app.route('/tdsl2',methods=['GET','POST'])
-def getlts2():
-    if (request.method == 'POST'):
-       content = request.get_json(silent=True)
-       print(content['text'])
-       txt = content["text"]
-
-       a = dict.check_dsl_string_boolean(txt)
-       # print(a)
-       b = dict.construct_dynamic_dsl_boolean_query(a)
-
-       a = json.loads(b)
-       # now we have json body for a request to make for the search
-       r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
-       # print(r.status_code,r.json())
-       data = r.json()
-       noposts = (data['hits']['total'])  # total hits found!
-       header = "I found " + str(noposts) + " number of posts, here are few examples: \n"
-       d = {}
-      # d['text'] = title
-      # attach = []
-       post = ""
-       for i in range(0, 3):
-           title = (data['hits']['hits'][i]['_source']['title'])  # Title
-           body_sliced = data['hits']['hits'][i]['_source']['body']  # Body
-           # body = (html.escape(body_sliced[:200])) # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
-           body = (body_sliced[:189])  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
-
-        #   p = {}
-           # body_sliced = data[:200]
-           link = "https://www.stackoverflow.com/questions/" + str(data['hits']['hits'][i]['_source']['question_id'])
-           # print(link)
-           api = data['hits']['hits'][i]['_source']['api']
-           api = " ".join(str(x) for x in api)
-         #  # print(api)
-           topic = data['hits']['hits'][i]['_source']['topic'][:10]
-           topic = " ".join(str(x) for x in topic)
-           post = post + title +"\n"+ body +"\n"+ '<' + link + '> '+"\n" + '` TOPIC `' + topic +"\n"+ '` API `' + api +"\n"
-           #     attach.append(p)
-      # d['attachments'] = attach
-       # print(attach_me)
-      # j = json.dumps(d)
-       #Instead of making a request here return json to the bot
-       #r = requests.post('https://hooks.slack.com/services/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', j)
-       #print(r.status_code)
-#    return jsonify(j),200
-    return jsonify({"text":header+post}),200
-
-
-@app.route('/tdsl-backup',methods=['GET','POST'])
-def getltsbackup():
-    if (request.method == 'POST'):
-       content = request.get_json(silent=True)
-       print(content['text'])
-       txt = content["text"]
-
-       a = dict.check_dsl_string_boolean(txt)
-       # print(a)
-       b = dict.construct_dynamic_dsl_boolean_query(a)
-
-       a = json.loads(b)
-       # now we have json body for a request to make for the search
-       r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
-       # print(r.status_code,r.json())
-       data = r.json()
-       noposts = (data['hits']['total'])  # total hits found!
-       title = "I found " + str(noposts) + " number of posts, here are few examples:"
-       d = {}
-       d['text'] = title
-       attach = []
-       for i in range(0, 3):
-           title = (data['hits']['hits'][i]['_source']['title'])  # Title
-           body_sliced = data['hits']['hits'][i]['_source']['body']  # Body
-           # body = (html.escape(body_sliced[:200])) # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
-           body = (body_sliced[
-                   :200])  # sliced body and escpaed from special chars then converted to string .encode('ascii', 'xmlcharrefreplace')).decode("utf-8")
-
-           p = {}
-           # body_sliced = data[:200]
-           link = "https://www.stackoverflow.com/questions/" + str(data['hits']['hits'][i]['_source']['question_id'])
-           # print(link)
-           api = data['hits']['hits'][i]['_source']['api']
-           api = " ".join(str(x) for x in api)
-           # print(api)
-           topic = data['hits']['hits'][i]['_source']['topic'][:10]
-           topic = " ".join(str(x) for x in topic)
-           # post = '{"type": "section","text":"*' + title + body + '<' + link + '> ' + '` TOPIC `' + topic + '` API `' + api + '"}'
-           p[
-               'text'] = "*" + title + "*\n" + body + "\n" + link + "\n" + " `API` \n " + api + "\n" + " `TOPIC`" + " \n " + topic
-           attach.append(p)
-       d['attachments'] = attach
-       # print(attach_me)
-       j = json.dumps(d)
-       #Instead of making a request here return json to the bot
-       #r = requests.post('https://hooks.slack.com/services/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', j)
-       #print(r.status_code)
-#    return jsonify(j),200
-    return j,200
-
 
 @app.route('/tosal', methods = ['POST', 'GET'])
 def tosal():
@@ -304,8 +155,9 @@ def notifyme():
      import datetime
      from ast import literal_eval
      s = request.get_data()
-     s = s.decode()
-     s:Dict[str,List[str]] = parse_qs(s)
+     s = s.decode('utf-8')
+     s = parse_qs(s)
+    # print(s)
 #     res = literal_eval(q.decode('utf8'))
 #     print(res)
      user= s["user_id"][0]
@@ -343,7 +195,7 @@ def notifyme():
                 a = "found"
         if a== "notfound":        
            collection.insert_one(obj)
-           msg = "Ok, I have recorded your request and will let you know shortly"
+           msg = "Ok, I have recorded your request and will let you know when we have updates"
     #    if (txt =="delete" or txt =="del"):
     #        collection.remove(myquery)
     #        msg= "I've removed your notification from my records use /notifyme if you changed your mind."
@@ -367,9 +219,8 @@ def shownotify():
     from typing import List, Dict
     if (request.method == 'POST'):
         s = request.get_data()
-        s = s.decode()
-        res:Dict[str,List[str]] = parse_qs(s) 
-        print(res)
+        s = s.decode('utf-8')
+        res = parse_qs(s)
         user= res["user_id"][0]
     #    txt = res["text"][0]
         res_url =res['response_url']
@@ -403,11 +254,11 @@ def shownotify():
 def delnotify():
     from urllib.parse import parse_qs
     from bson.objectid import ObjectId
+    from typing import List, Dict
     if (request.method == 'POST'):
         s = request.get_data()
-        s = s.decode()
-        res:Dict[str,List[str]] = parse_qs(s) 
-        print(res)
+        s = s.decode('utf-8')
+        res = parse_qs(s)
         user= res["user_id"][0]
         txt = res["text"][0]
         res_url =res["response_url"][0]
@@ -438,4 +289,3 @@ if __name__  == '__main__':
     host = os.environ.get('IP','0.0.0.0')
     port = int(os.environ.get('PORT',7000))
     app.run(host=host,port=port,debug=True)
-    

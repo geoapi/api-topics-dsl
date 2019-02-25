@@ -19,7 +19,9 @@ def getlts():
        txt = content["text"]
 
        a = dict.check_dsl_string_boolean(txt)
+       print(a)
        b = dict.construct_dynamic_dsl_boolean_query(a)
+       print(b)
        a = json.loads(b)
        url = 'http://35.244.98.50:9200/question/so/_search'
        

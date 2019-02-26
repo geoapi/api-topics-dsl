@@ -13,22 +13,22 @@ app = Flask(__name__)
 #This end point takes json object {"text":"access tokens and facebook and security and returns results from our TDSL and the indexing service"}
 @app.route('/tdsl',methods=['GET','POST'])
 def getlts():
-    import asyncio
+    
     if (request.method == 'POST'):
        content = request.get_json(silent=True)
        txt = content["text"]
 
        a = dict.check_dsl_string_boolean(txt)
-       print(a)
+    #   print(a)
        b = dict.construct_dynamic_dsl_boolean_query(a)
-       print(b)
+    #   print(b)
        a = json.loads(b)
        url = 'http://35.244.98.50:9200/question/so/_search'
        
-       def make_request(a): 
-          r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
-          return r
-       r = make_request(a)
+
+       r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
+
+
        print(r.json())
        data = r.json()
  #      data = r.text()

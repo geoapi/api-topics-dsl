@@ -1,17 +1,17 @@
 api_dict = [
-             {"name":"facebook","keywords":["facebook_graph_api", "facebook_API", "facebook_api", "FB_API", "fb_api","fb","fbapi","facebookapi","facebookgraphapi"],"tag":"facebook-graph-api"},
-             {"name":"twitter", "keywords":["twitter_api", "Twitter_API","twitterapi"], "tag":"twitter-api"},
-             {"name":"winapi","keywords":["Winapi","win_api", "WINAPI", "win32_api","win32api", "Windows_API","The_Windows_API"],"tag":"winapi"},
-             {"name":"gmail", "keywords":["Google_GMail_api", "Gmail_API","Google_api","Google_API"], "tag":"gmail-api"},
-             {"name":"java", "keywords":["Java_api", "Java_API"], "tag":"java-api"},
-             {"name": "youtube", "keywords": ["YouTube_API","youtube_api","Youtube_api","Youtube_API"], "tag": "youtube-api"},
-             {"name": "googleplaces", "keywords": ["Google_Places_API","Google_places_api","Google_Places_API"], "tag": "google-places-api"},
-             {"name": "instagram", "keywords": ["instagram_api","Instagram_API"], "tag": "instagram-api"},
-             {"name": "youtube", "keywords": ["youtube_api"], "tag": "youtube-api"},
-             {"name": "googlecalendar", "keywords": ["google_calendar_api","Google_Calendar_API"], "tag": "google-calendar-api"},
-             {"name": "dropbox", "keywords": ["dropbox_api","Dropbox_API"], "tag": "dropbox-api"},
-             {"name": "slack", "keywords": ["slack_api"], "tag": "slack-api"},
-             {"name": "heresdk", "keywords": ["HERE_sdk","here_sdk","here_api","Here_API","hereapi"], "tag": "here-api"}
+             {"name":"facebook","keywords":["facebook graph api", "facebook API", "facebook api", "FB API", "fb api","fb graph api","fb","fbapi","facebookapi","facebookgraphapi"],"tag":"facebook-graph-api"},
+             {"name":"twitter", "keywords":["twitter api", "Twitter API","twitterapi"], "tag":"twitter-api"},
+             {"name":"winapi","keywords":["Winapi","win api", "WINAPI", "win32 api","win32api", "Windows API","The Windows API"],"tag":"winapi"},
+             {"name":"gmail", "keywords":["Google GMail api", "Gmail API","Google api","Google API"], "tag":"gmail-api"},
+             {"name":"java", "keywords":["Java api", "Java API"], "tag":"java-api"},
+             {"name": "youtube", "keywords": ["YouTube API","youtube api","Youtube api","Youtube API"], "tag": "youtube-api"},
+             {"name": "googleplaces", "keywords": ["Google Places API","Google places api","Google Places API"], "tag": "google-places-api"},
+             {"name": "instagram", "keywords": ["instagram api","Instagram API"], "tag": "instagram-api"},
+             {"name": "youtube", "keywords": ["youtube api"], "tag": "youtube-api"},
+             {"name": "googlecalendar", "keywords": ["google calendar api","Google Calendar API"], "tag": "google-calendar-api"},
+             {"name": "dropbox", "keywords": ["dropbox api","Dropbox API"], "tag": "dropbox-api"},
+             {"name": "slack", "keywords": ["slack api"], "tag": "slack-api"},
+             {"name": "heresdk", "keywords": ["HERE sdk","here sdk","here api","Here API","hereapi"], "tag": "here-api"}
             ]
 
 topic_dict = [
@@ -42,3 +42,4 @@ topic_dict = [
     {"id":24,"name":"setting parameters","category_id":6,"keywords":["setting","parameter"]},
     {"id":25,"name":"recommendation","category_id":6,"keywords":["recommend","suggest"]}
     ]
+

@@ -131,7 +131,11 @@ def check_dsl_string_boolean(dsl_string):
     while (len(l) > 0):
         query = ""
         getOp = l.popleft()
-        getKey = l.popleft()
+        getKey =''
+        seperat = ''
+        while (len(l) > 0 and l[0] not in op):
+           getKey = getKey + seperat + l.popleft()
+           seperat = ' '
         if getOp == "AND" or getOp == "And" or getOp == "and":
             if (getKey in api_dict_temp):
                 api_name_and.append(getKey)

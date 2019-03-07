@@ -16,19 +16,22 @@ def getlts():
     
     if (request.method == 'POST'):
        content = request.get_json(silent=True)
+
        txt = content["text"]
 
-       a = dict.check_dsl_string_boolean(txt)
-    #   print(a)
-       b = dict.construct_dynamic_dsl_boolean_query(a)
-    #   print(b)
-       a = json.loads(b)
-       url = 'http://35.244.98.50:9200/question/so/_search'
+       chk_dsl = dict.check_dsl_string_boolean(txt)
+       b = dict.construct_dynamic_dsl_boolean_query(chk_dsl)
+      
+      # a = json.loads(b)
        
-
-       r = requests.post('http://35.244.98.50:9200/question/so/_search', json=a)
-
-
+       # LOG Users entries and genrated dsl
+       from pymongo import MongoClient
+       client = MongoClient("mongodb://localhost:27017")
+       database = client["api"]
+       collection = database["logs"]
+       collection.insert_one({"nlq":txt,"check_dsl":chk_dsl,"tdsl":b})
+       url = 'http://35.244.98.50:9200/question/so/_search'
+       r = requests.post('http://35.244.98.50:9200/question/so/_search', json=json.loads(b))
        print(r.json())
        data = r.json()
  #      data = r.text()
@@ -151,7 +154,11 @@ def search_posts():
 def notifyme():
      # msg = 'ready'
    if (request.method == 'POST'):
-     from urllib.parse import parse_qs
+     try:
+        from urllib.parse import parse_qs
+     except ImportError:
+        from urlparse import urlparse
+
      from bson.json_util import dumps
      from bson import json_util
      import datetime
@@ -217,7 +224,12 @@ def notifyme():
 @app.route('/shownotifications',methods=['POST'])
 def shownotify():
     import json
-    from urllib.parse import parse_qs
+    #from urllib.parse import parse_qs
+    try:
+        from urllib.parse import parse_qs
+    except ImportError:
+        from urlparse import urlparse
+
     from typing import List, Dict
     if (request.method == 'POST'):
         s = request.get_data()
@@ -237,7 +249,7 @@ def shownotify():
         #r = dict()
         t = ""
         for doc in cursor:
-            t= t +"ID: "+(str(doc['_id'])[-4:]+ "  Content:  " + doc["text"])+"\n"
+            t= t +"ID: *"+(str(doc['_id'])[-4:]+ "*  _Notification_ :  " + doc["text"])+"\n"
        #TODO text for slack
        
         #if d:
@@ -254,7 +266,12 @@ def shownotify():
 
 @app.route('/deletenotification',methods=['POST'])
 def delnotify():
-    from urllib.parse import parse_qs
+    #from urllib.parse import parse_qs
+    try:
+        from urllib.parse import parse_qs
+    except ImportError:
+        from urlparse import urlparse
+
     from bson.objectid import ObjectId
     from typing import List, Dict
     if (request.method == 'POST'):
